@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+.idea/
+.idea/uiDesigner.xml
+.idea/uiDesigner.xml
+.idea/uiDesigner.xml
