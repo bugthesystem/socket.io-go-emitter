@@ -64,7 +64,7 @@ If you encounter a bug, performance issue, or malfunction, please add an [Issue]
 ##TODO
 - Add more tests
 - Add samples
-- 
+
 ###Open Source Projects in Use
 * [redigo](https://github.com/garyburd/redigo) by Gary Burd @garyburd
 * [msgpack](https://github.com/vmihailenco/msgpack) by Vladimir Mihailenco @vmihailenco
