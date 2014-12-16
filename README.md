@@ -19,11 +19,10 @@ go get github.com/ziyasal/socket.io-go-emitter/emitter
 ### Emitter(opts)
 
 The following options are allowed:
-- `key`: the name of the key to pub/sub events on as prefix (`socket.io`)
-- `host`: host to connect to redis on (`localhost`)
-- `port`: port to connect to redis on (`6379`)
+- `Key`: the name of the key to pub/sub events on as prefix (`socket.io`)
+- `Host`: host to connect to redis on (`localhost:6379`)
 
-**Important** Make sure to supply the`host` and `port` options.
+**Important** Make sure to supply the`Host` options.
 
 Specifies a specific `room` that you want to emit to.
 
@@ -33,12 +32,11 @@ import "github.com/ziyasal/socket.io-go-emitter/emitter"
 
 //....
 
-opts := map[string]string{
-	"host" : "127.0.0.1",
-	"port" : "6379",
-	"key"  : "socket.io",
- }
-sio := emitter.New((map[string]string)(opts))
+opts := emitter.EmitterOptions{
+		Host: "127.0.0.1:6379",
+		Key   :"socket.io",
+	}
+sio := emitter.New(opts)
 ```
 
 ###Emitter#Emit(channel,message):Emitter

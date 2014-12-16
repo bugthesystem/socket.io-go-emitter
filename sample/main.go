@@ -6,12 +6,11 @@ import (
 )
 
 func main() {
-	opts := map[string]string{
-		"host" : "127.0.0.1",
-		"port" : "6379",
-		"key"  : "socket.io",
+	opts := emitter.EmitterOptions{
+		Host: "127.0.0.1:6379",
+		Key   :"socket.io",
 	}
-	sio := emitter.New((map[string]string)(opts))
+	sio := emitter.New(opts)
 
 	fmt.Println("Emit :", sio.Emit("broadcast event", "Hello from socket.io-go-emitter"))
 

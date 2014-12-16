@@ -12,20 +12,26 @@ const (
 	binaryEvent = 5
 )
 
+type EmitterOptions struct {
+	Host           string
+	Password       string
+	Key            string
+}
+
 type Emitter struct {
-	_opts    map[string]string
+	_opts    EmitterOptions
 	_key     string
 	_flags   map[string]string
 	_rooms   map[string]bool
 }
 
-func New(opts map[string]string) Emitter {
+func New(opts EmitterOptions) Emitter {
 	validateOptions(opts)
 
 	emitter := Emitter{_opts:opts}
 
-	if value, ok := opts["key"]; ok {
-		emitter._key = value+"#emitter"
+	if opts.Key != "" {
+		emitter._key = opts.Key+"#emitter"
 	}else {
 		emitter._key = "socket.io#emitter"
 	}
@@ -53,7 +59,6 @@ func (emitter Emitter) Of(nsp string) Emitter {
 }
 
 func (emitter Emitter) Emit(args ...interface{}) bool {
-
 	packet := make(map[string]interface{})
 	extras := make(map[string]interface{})
 
@@ -87,7 +92,7 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 	}
 
 	//TODO: Gorotunes
-	//PAck & Publish
+	//Pack & Publish
 	b, err := msgpack.Marshal([]interface{}{packet, extras})
 	if err != nil {
 		panic(err)
@@ -107,25 +112,20 @@ func (emitter Emitter) hasBin(args ...interface{}) bool {
 	return true
 }
 
-func validateOptions(opts map[string]string) () {
-	if _, ok := opts["host"]; ok == false {
+func validateOptions(opts EmitterOptions) () {
+	if opts.Host == "" {
 		panic("Missing redis `host`")
-	}
-
-	if _, ok := opts["port"]; ok == false {
-		panic("Missing redis `port`")
 	}
 }
 
-func dial(opts map[string]string) (redis.Conn, error) {
-	connStr := fmt.Sprintf("%s:%s", opts["host"], opts["port"])
-	c, err := redis.DialTimeout("tcp", connStr, 0, 10*time.Second, 10*time.Second)
+func dial(opts EmitterOptions) (redis.Conn, error) {
+	c, err := redis.DialTimeout("tcp", opts.Host, 0, 10*time.Second, 10*time.Second)
 	if err != nil {
 		return nil, err
 	}
 
-	if value, ok := opts["password"]; ok {
-		if _, err := c.Do("AUTH", value); err != nil {
+	if opts.Password != "" {
+		if _, err := c.Do("AUTH", opts.Password); err != nil {
 			c.Close()
 			return nil, err
 		}
@@ -136,7 +136,7 @@ func dial(opts map[string]string) (redis.Conn, error) {
 }
 
 
-func publish(opts map[string]string, channel, value interface{}) {
+func publish(opts EmitterOptions, channel, value interface{}) {
 	c, err := dial(opts)
 	if err != nil {
 		panic(err)
