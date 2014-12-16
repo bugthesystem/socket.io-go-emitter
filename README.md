@@ -23,7 +23,7 @@ The following options are allowed:
 - `host`: host to connect to redis on (`localhost`)
 - `port`: port to connect to redis on (`6379`)
 
-**Important!** Make sure to supply the`host` and `port` options.
+**Important** Make sure to supply the`host` and `port` options.
 
 Specifies a specific `room` that you want to emit to.
 
