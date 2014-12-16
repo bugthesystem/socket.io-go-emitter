@@ -10,6 +10,7 @@ func main() {
 		Host: "127.0.0.1:6379",
 		Key   :"socket.io",
 	}
+
 	sio := emitter.New(opts)
 
 	fmt.Println("Emit :", sio.Emit("broadcast event", "Hello from socket.io-go-emitter"))

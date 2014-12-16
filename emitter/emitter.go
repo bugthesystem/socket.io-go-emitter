@@ -13,30 +13,31 @@ const (
 )
 
 type EmitterOptions struct {
-	Host           string
-	Password       string
-	Key            string
+	Host       string
+	Password   string
+	Key        string
 }
 
 type Emitter struct {
-	_opts    EmitterOptions
-	_key     string
-	_flags   map[string]string
-	_rooms   map[string]bool
+	_opts      EmitterOptions
+	_key       string
+	_flags     map[string]string
+	_rooms     map[string]bool
+	_pool      *redis.Pool
 }
 
 func New(opts EmitterOptions) Emitter {
-	validateOptions(opts)
-
 	emitter := Emitter{_opts:opts}
 
+	initRedisConnPool(&emitter,opts)
+
 	if opts.Key != "" {
-		emitter._key = opts.Key+"#emitter"
+		emitter._key = fmt.Sprintf("%s#emitter", opts.Key)
 	}else {
 		emitter._key = "socket.io#emitter"
 	}
 
-	emitter._rooms = make(map[string]bool, 0)
+	emitter._rooms = make(map[string]bool)
 	emitter._flags = make(map[string]string)
 
 	return emitter
@@ -97,7 +98,7 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 	if err != nil {
 		panic(err)
 	}else {
-		publish(emitter._opts, emitter._key, b)
+		publish(emitter,emitter._key, b)
 	}
 
 	emitter._rooms = make(map[string]bool)
@@ -112,35 +113,44 @@ func (emitter Emitter) hasBin(args ...interface{}) bool {
 	return true
 }
 
-func validateOptions(opts EmitterOptions) () {
+func initRedisConnPool(emitter *Emitter ,opts EmitterOptions) () {
 	if opts.Host == "" {
 		panic("Missing redis `host`")
 	}
+
+	emitter._pool = newPool(opts)
 }
 
-func dial(opts EmitterOptions) (redis.Conn, error) {
-	c, err := redis.DialTimeout("tcp", opts.Host, 0, 10*time.Second, 10*time.Second)
-	if err != nil {
-		return nil, err
-	}
+func newPool(opts EmitterOptions) *redis.Pool {
+	return &redis.Pool{
+		MaxIdle: 80,
+		MaxActive: 12000, // max number of connections
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", opts.Host)
+			if err != nil {
+				return nil, err
+			}
 
-	if opts.Password != "" {
-		if _, err := c.Do("AUTH", opts.Password); err != nil {
-			c.Close()
-			return nil, err
-		}
-		return c, err
-	}
+			if opts.Password != "" {
+				if _, err := c.Do("AUTH", opts.Password); err != nil {
+					c.Close()
+					return nil, err
+				}
+				return c, err
+			}
 
-	return c, nil
+			return c, err
+		},
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
+	}
 }
 
 
-func publish(opts EmitterOptions, channel, value interface{}) {
-	c, err := dial(opts)
-	if err != nil {
-		panic(err)
-	}
+func publish(emitter Emitter, channel string, value interface{}) {
+	c := emitter._pool.Get()
 	defer c.Close()
 	c.Do("PUBLISH", channel, value)
 
