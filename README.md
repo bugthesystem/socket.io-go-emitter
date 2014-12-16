@@ -29,7 +29,11 @@ Specifies a specific `room` that you want to emit to.
 
 **Initialize emitter**
 ```go
- opts := map[string]string{
+import "github.com/ziyasal/socket.io-go-emitter/emitter"
+
+//....
+
+opts := map[string]string{
 	"host" : "127.0.0.1",
 	"port" : "6379",
 	"key"  : "socket.io",
