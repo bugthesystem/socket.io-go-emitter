@@ -14,16 +14,6 @@ A [Go](https://golang.org/) implementation of socket.io-emitter
 go get github.com/ziyasal/socket.io-go-emitter/emitter
 ```
 
-```go
-  opts := map[string]string{
-		"host" : "127.0.0.1",
-		"port" : "6379",
-		"key"  : "socket.io",
-	}
-	sio := emitter.New((map[string]string)(opts))
-  sio.Emit("broadcast event", "Hello from socket.io-go-emitter")
-```
-
 ## API
 
 ### Emitter(opts)
@@ -36,6 +26,22 @@ The following options are allowed:
 Important! Make sure to supply the`host` and `port` options.
 
 Specifies a specific `room` that you want to emit to.
+
+**Initialize emitter**
+```go
+ opts := map[string]string{
+	"host" : "127.0.0.1",
+	"port" : "6379",
+	"key"  : "socket.io",
+ }
+sio := emitter.New((map[string]string)(opts))
+```
+
+###Emitter#Emit(channel,message):Emitter
+```go
+  sio.Emit("broadcast event", "Hello from socket.io-go-emitter")
+```
+
 
 ### Emitter#In(room):Emitter
 ```go
