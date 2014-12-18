@@ -8,8 +8,10 @@ import (
 )
 
 const (
-	event       = 2
-	binaryEvent = 5
+	event              = 2
+	binaryEvent        = 5
+	redisPoolMaxIdle   = 80
+	redisPoolMaxActive = 12000 // max number of connections
 )
 
 type EmitterOptions struct {
@@ -29,7 +31,7 @@ type Emitter struct {
 func New(opts EmitterOptions) Emitter {
 	emitter := Emitter{_opts:opts}
 
-	initRedisConnPool(&emitter,opts)
+	initRedisConnPool(&emitter, opts)
 
 	if opts.Key != "" {
 		emitter._key = fmt.Sprintf("%s#emitter", opts.Key)
@@ -98,7 +100,7 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 	if err != nil {
 		panic(err)
 	}else {
-		publish(emitter,emitter._key, b)
+		publish(emitter, emitter._key, b)
 	}
 
 	emitter._rooms = make(map[string]bool)
@@ -113,7 +115,7 @@ func (emitter Emitter) hasBin(args ...interface{}) bool {
 	return true
 }
 
-func initRedisConnPool(emitter *Emitter ,opts EmitterOptions) () {
+func initRedisConnPool(emitter *Emitter , opts EmitterOptions) () {
 	if opts.Host == "" {
 		panic("Missing redis `host`")
 	}
@@ -123,8 +125,8 @@ func initRedisConnPool(emitter *Emitter ,opts EmitterOptions) () {
 
 func newPool(opts EmitterOptions) *redis.Pool {
 	return &redis.Pool{
-		MaxIdle: 80,
-		MaxActive: 12000, // max number of connections
+		MaxIdle: redisPoolMaxIdle,
+		MaxActive: redisPoolMaxActive,
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", opts.Host)
 			if err != nil {
@@ -146,6 +148,7 @@ func newPool(opts EmitterOptions) *redis.Pool {
 			return err
 		},
 	}
+
 }
 
 
