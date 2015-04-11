@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/ziyasal/socket.io-go-emitter/emitter"
 )
 
 func main() {
-	opts := emitter.EmitterOptions{
+	opts := emitter.Options{
 		Host: "127.0.0.1:6379",
-		Key   :"socket.io",
+		Key:  "socket.io",
 	}
 
 	sio := emitter.New(opts)
