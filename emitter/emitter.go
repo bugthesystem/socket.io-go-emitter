@@ -94,7 +94,7 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 		extras["flags"] = make(map[string]string)
 	}
 
-	//TODO: Gorotunes
+	//TODO: Goroutines
 	//Pack & Publish
 	b, err := msgpack.Marshal([]interface{}{packet, extras})
 	if err != nil {
