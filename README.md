@@ -5,6 +5,7 @@ A [Go](https://golang.org/) implementation of socket.io-emitter
 
 [socket.io](http://socket.io/) provides a hook point to easily allow you to emit events to browsers from anywhere so `socket.io-go-emitter` communicates with [socket.io](http://socket.io/) servers through redis.
 
+[![GoDoc](https://godoc.org/github.com/ziyasal/socket.io-go-emitter/emitter?status.svg)](https://godoc.org/github.com/ziyasal/socket.io-go-emitter/emitter)
 
 ## How to use
 
