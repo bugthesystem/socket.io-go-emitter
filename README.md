@@ -61,18 +61,18 @@ Specifies a specific namespace that you want to emit to.
  sio.Of("/nsp").Emit("broadcast event", "Hello from socket.io-go-emitter")
 ```
 
-##Bugs
+## Bugs
 If you encounter a bug, performance issue, or malfunction, please add an [Issue](https://github.com/ziyasal/socket.io-go-emitter/issues) with steps on how to reproduce the problem.
 
-##TODO
+## TODO
 - Add more tests
 - Add samples
 
-###Open Source Projects in Use
+### Open Source Projects in Use
 * [redigo](https://github.com/garyburd/redigo) by Gary Burd @garyburd
 * [msgpack](https://github.com/vmihailenco/msgpack) by Vladimir Mihailenco @vmihailenco
 
-##License
+## License
 Code and documentation are available according to the *MIT* License (see [LICENSE](https://github.com/ziyasal/socket.io-go-emitter/blob/master/LICENSE)).
 
 
