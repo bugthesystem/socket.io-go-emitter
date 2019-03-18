@@ -89,7 +89,6 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 	}
 
 	if ok := len(emitter._rooms); ok > 0 {
-		//TODO:Cast??
 		extras["rooms"] = getKeys(emitter._rooms)
 	} else {
 		extras["rooms"] = make([]string, 0, 0)
@@ -100,8 +99,7 @@ func (emitter Emitter) Emit(args ...interface{}) bool {
 	} else {
 		extras["flags"] = make(map[string]string)
 	}
-
-	//TODO: Goroutines
+	
 	//Pack & Publish
 	b, err := msgpack.Marshal([]interface{}{packet, extras})
 	if err != nil {
